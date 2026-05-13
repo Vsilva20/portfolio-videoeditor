@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vsilva — Editor de Vídeo e Youtuber. Portfólio de trabalhos selecionados.">
+    <meta property="og:title" content="Vsilva — Video Editor & Youtuber">
+    <title>Vsilva | Portfolio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Paleta de Cores */
+            --bg-base: #0a2a2a;
+            --bg-dark: #000d0d;
+            --color-secondary: #0d4f4f;
+            --color-highlight: #1a9e8f;
+            --color-accent: #3ecfb2;
+            --text-main: #e8f0ef;
+            --text-muted: #a3b8b5;
+
+            /* Tipografia */
+            --font-title: 'Syne', sans-serif;
+            --font-body: 'Outfit', sans-serif;
+
+            /* Transições */
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Textura de Ruído (Grain) */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-title);
+            font-weight: 700;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Utilitários de Animação (Staggered Reveal) */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --------------------------
+           MENU FLUTUANTE (NAVBAR)
+           -------------------------- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+        }
+
+        .navbar.scrolled {
+            padding: 1rem 5%;
+            background: rgba(10, 42, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(62, 207, 178, 0.1);
+        }
+
+        .logo {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--color-accent);
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+        }
+
+        .lang-switch button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .lang-switch button.active {
+            color: var(--color-accent);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            text-decoration-color: var(--color-accent);
+        }
+
+        .lang-switch button:hover {
+            color: var(--text-main);
+        }
+
+        .lang-switch .separator {
+            color: var(--color-secondary);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-overlay .nav-links {
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .mobile-menu-overlay .nav-links a {
+            font-size: 2rem;
+            font-family: var(--font-title);
+        }
+
+        /* --------------------------
+           HERO SECTION
+           -------------------------- */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+        }
+
+        .hero-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-bg .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(10, 42, 42, 0.4), rgba(0, 13, 13, 0.9));
+        }
+
+        .hero-content {
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 1.5rem;
+        }
+
+        .hero-name {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--color-highlight);
+            color: var(--bg-dark);
+            padding: 1rem 2.5rem;
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 50px;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--color-accent);
+            border-color: var(--color-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(27, 219, 146, 0.2);
+        }
+
+        /* --------------------------
+           SOBRE (ABOUT)
+           -------------------------- */
+        section {
+            padding: 6rem 5%;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 3rem;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--color-accent);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(62, 207, 178, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .about-video iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --------------------------
+           PORTFÓLIO (WORKS)
+           -------------------------- */
+        .portfolio-bg {
+            background-color: var(--bg-dark);
+        }
+
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background: var(--bg-base);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(26, 158, 143, 0.1);
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-thumb {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-thumb img {
+            transform: scale(1.05);
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 42, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover .play-overlay,
+        .short-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-overlay svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--color-accent);
+            filter: drop-shadow(0 0 10px rgba(62, 207, 178, 0.5));
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .play-overlay svg,
+        .short-card:hover .play-overlay svg {
+            transform: scale(1);
+        }
+
+        .card-info {
+            padding: 1.5rem;
+        }
+
+        .card-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --------------------------
+           SHORTS & REELS
+           -------------------------- */
+        .shorts-section-title {
+            margin-top: 2rem;
+            font-size: 2rem;
+        }
+
+        .shorts-carousel {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1.5rem;
+            margin-top: 2rem;
+            /* Hide scrollbar for cleaner look, optional */
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-secondary) var(--bg-base);
+        }
+
+        .shorts-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .shorts-carousel::-webkit-scrollbar-track {
+            background: var(--bg-base);
+            border-radius: 4px;
+        }
+
+        .shorts-carousel::-webkit-scrollbar-thumb {
+            background: var(--color-secondary);
+            border-radius: 4px;
+        }
+
+        .short-card {
+            min-width: 280px;
+            max-width: 280px;
+            scroll-snap-align: start;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-base);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(26, 158, 143, 0.1);
+        }
+
+        .short-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-accent);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .short-card .card-thumb {
+            position: relative;
+            aspect-ratio: 9/16;
+            overflow: hidden;
+        }
+
+        .short-card .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .short-card:hover .card-thumb img {
+            transform: scale(1.05);
+        }
+
+        /* --------------------------
+           CONTATO (CONTACT)
+           -------------------------- */
+        .contact-section {
+            text-align: center;
+            background: linear-gradient(to bottom, var(--bg-base), var(--bg-dark));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 5%;
+        }
+
+        .contact-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 3rem;
+            color: var(--text-main);
+            font-family: var(--font-title);
+        }
+
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .contact-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: rgba(13, 79, 79, 0.3);
+            border: 1px solid rgba(62, 207, 178, 0.2);
+            border-radius: 50px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(5px);
+        }
+
+        .contact-pill:hover {
+            background: var(--color-highlight);
+            border-color: var(--color-accent);
+            color: var(--bg-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(26, 158, 143, 0.2);
+        }
+
+        .contact-pill svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* --------------------------
+           FOOTER
+           -------------------------- */
+        footer {
+            text-align: center;
+            padding: 2rem 5%;
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* --------------------------
+           MODAL DE VÍDEO
+           -------------------------- */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(62, 207, 178, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 2.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--color-accent);
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            /* 16:9 Aspect Ratio */
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --------------------------
+           MEDIA QUERIES (RESPONSIVO)
+           -------------------------- */
+        @media (max-width: 992px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .works-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .lang-switch {
+                display: none;
+                /* Hide on mobile, show in hamburger */
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .mobile-menu-overlay .lang-switch {
+                display: flex;
+                margin-top: 2rem;
+            }
+
+            .works-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .short-card {
+                min-width: 240px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Overlay de Textura CSS (Grain) -->
+    <div class="grain-overlay"></div>
+
+    <!-- Menu Flutuante -->
+    <nav class="navbar" id="navbar">
+        <a href="#hero" class="logo">Vsilva</a>
+
+        <div class="nav-links">
+            <a href="#about" data-i18n="navAbout">Sobre</a>
+            <a href="#portfolio" data-i18n="navPortfolio">Portfólio</a>
+            <a href="#contact" data-i18n="navContact">Contato</a>
+        </div>
+
+        <div class="lang-switch">
+            <button id="lang-pt" aria-label="Mudar para Português">PT</button>
+            <span class="separator">|</span>
+            <button id="lang-en" aria-label="Switch to English">EN</button>
+        </div>
+
+        <div class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Overlay do Menu Mobile -->
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <div class="nav-links" style="display: flex;">
+            <a href="#about" class="mobile-link" data-i18n="navAbout">Sobre</a>
+            <a href="#portfolio" class="mobile-link" data-i18n="navPortfolio">Portfólio</a>
+            <a href="#contact" class="mobile-link" data-i18n="navContact">Contato</a>
+        </div>
+        <div class="lang-switch" style="display: flex;">
+            <button id="lang-pt-mobile" aria-label="Mudar para Português">PT</button>
+            <span class="separator">|</span>
+            <button id="lang-en-mobile" aria-label="Switch to English">EN</button>
+        </div>
+    </div>
+
+    <!-- Seção Hero -->
+    <section id="hero" class="hero">
+        <div class="hero-bg">
+            <!-- Substitua pelo caminho do seu vídeo de background -->
+            <video autoplay muted loop playsinline class="bg-video">
+                <source src="bg-site.mp4" type="video/mp4">
+            </video>
+            <div class="overlay"></div>
+        </div>
+        <div class="hero-content fade-up">
+            <h1 class="hero-name">Vsilva</h1>
+            <p class="hero-title" data-i18n="heroTitle">Editor de Vídeo & Youtuber</p>
+            <a href="#portfolio" class="btn-primary" data-i18n="heroCTA">Ver Portfólio</a>
+        </div>
+    </section>
+
+    <!-- Seção Sobre -->
+    <section id="about">
+        <div class="about-grid">
+            <div class="about-text fade-up">
+                <h2 class="section-title" data-i18n="aboutTitle">Sobre Mim</h2>
+                <p data-i18n="aboutText">
+                    Vsilva, Editor de vídeo e Youtuber com +5 anos de experiência. Especializado em edição de conteúdo
+                    gamer, storytelling e shorts de alta retenção.
+                </p>
+            </div>
+            <div class="about-video fade-up">
+                <!-- Substitua o ID (jxGJzbKT1hk) pelo ID do seu Demo Reel -->
+                <iframe width="560" height="315"
+                    src="https://www.youtube.com/embed/jxGJzbKT1hk?si=W_2N-YlrxNME2rUX&controls=0&rel=0"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Portfólio -->
+    <section id="portfolio" class="portfolio-bg">
+        <h2 class="section-title fade-up" data-i18n="worksTitle">Trabalhos Selecionados</h2>
+
+        <!-- Grid de Vídeos Longos -->
+        <div class="works-grid">
+            <!-- TRABALHO 1: Substitua VIDEO_ID_1 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="jxGJzbKT1hk">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/jxGJzbKT1hk/hqdefault.jpg" alt="Thumbnail Trabalho 1"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work1Title">Trabalho #1</h3>
+                    <p data-i18n="work1Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+
+            <!-- TRABALHO 2: Substitua VIDEO_ID_2 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="K36QHbpJZns">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/K36QHbpJZns/hqdefault.jpg" alt="Thumbnail Trabalho 2"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work2Title">Trabalho #2</h3>
+                    <p data-i18n="work2Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+
+            <!-- TRABALHO 3: Substitua VIDEO_ID_3 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="o1pdqr5qz3s">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/o1pdqr5qz3s/hqdefault.jpg" alt="Thumbnail Trabalho 3"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work3Title">Trabalho #3</h3>
+                    <p data-i18n="work3Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+
+            <!-- TRABALHO 4: Substitua VIDEO_ID_4 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="JX_HAqsrkX0">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/JX_HAqsrkX0/hqdefault.jpg" alt="Thumbnail Trabalho 4"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work4Title">Trabalho #4</h3>
+                    <p data-i18n="work4Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+
+            <!-- TRABALHO 5: Substitua VIDEO_ID_5 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="hi9s-pHsD5Y">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/hi9s-pHsD5Y/hqdefault.jpg" alt="Thumbnail Trabalho 5"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work5Title">Trabalho #5</h3>
+                    <p data-i18n="work5Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+
+            <!-- TRABALHO 6: Substitua VIDEO_ID_6 pelo ID do YouTube -->
+            <div class="card fade-up" data-video-id="Xz06qz9xZEc">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/Xz06qz9xZEc/hqdefault.jpg" alt="Thumbnail Trabalho 6"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="work6Title">Trabalho #6</h3>
+                    <p data-i18n="work6Desc">[Descrição breve do projeto]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subtítulo Shorts -->
+        <h3 class="section-title shorts-section-title fade-up" data-i18n="shortsTitle">Shorts & Reels</h3>
+
+        <!-- Carrossel de Shorts -->
+        <div class="shorts-carousel fade-up">
+            <!-- SHORTS 1: Substitua SHORT_ID_1 pelo ID do YouTube -->
+            <div class="short-card" data-video-id="wnVbTi--B88">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/wnVbTi--B88/hqdefault.jpg" alt="Thumbnail Short 1"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="short1Title">Short #1</h3>
+                </div>
+            </div>
+
+            <!-- SHORTS 2: Substitua SHORT_ID_2 pelo ID do YouTube -->
+            <div class="short-card" data-video-id="lR5aqNbZjn4">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/lR5aqNbZjn4/hqdefault.jpg" alt="Thumbnail Short 2"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="short2Title">Short #2</h3>
+                </div>
+            </div>
+
+            <!-- SHORTS 3: Substitua SHORT_ID_3 pelo ID do YouTube -->
+            <div class="short-card" data-video-id="QWzPPFDzfdU">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/QWzPPFDzfdU/hqdefault.jpg" alt="Thumbnail Short 3"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="short3Title">Short #3</h3>
+                </div>
+            </div>
+
+            <!-- SHORTS 4: Substitua SHORT_ID_4 pelo ID do YouTube -->
+            <div class="short-card" data-video-id="848kwZjpVRM">
+                <div class="card-thumb">
+                    <img src="https://img.youtube.com/vi/848kwZjpVRM/hqdefault.jpg" alt="Thumbnail Short 4"
+                        loading="lazy">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 data-i18n="short4Title">Short #4</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Contato -->
+    <section id="contact" class="contact-section">
+        <h2 class="contact-title fade-up" data-i18n="contactTitle">Ficou interessado? Vamos conversar.</h2>
+        <div class="contact-links fade-up">
+            <!-- Email -->
+            <a href="mailto:victorhugo.web11@gmail.com" class="contact-pill">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                </svg>
+                victorhugo.web11@gmail.com
+            </a>
+            <!-- Youtube -->
+            <a href="https://youtube.com/@vsilva" target="_blank" rel="noopener noreferrer" class="contact-pill">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                Vsilva
+            </a>
+            <!-- Instagram -->
+            <a href="https://instagram.com/oficialvsilva" target="_blank" rel="noopener noreferrer"
+                class="contact-pill">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+                </svg>
+                @oficialvsilva
+            </a>
+            <!-- Discord -->
+            <a href="#" class="contact-pill">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+                </svg>
+                vsilva
+            </a>
+            <!-- Twitter/X -->
+            <a href="https://twitter.com/vsilva_20" target="_blank" rel="noopener noreferrer" class="contact-pill">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                @vsilva_20
+            </a>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <p data-i18n="footerText">&copy; 2026 Vsilva. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Modal de Vídeo (Lightbox) -->
+    <div id="video-modal" class="modal" aria-hidden="true" role="dialog">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Fechar vídeo">&times;</button>
+            <div class="iframe-container">
+                <iframe id="modal-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen
+                    title="Video Player"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Embutido -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // 1. SISTEMA DE IDIOMAS (TRADUÇÕES)
+            const translations = {
+                pt: {
+                    navAbout: "Sobre",
+                    navPortfolio: "Portfólio",
+                    navContact: "Contato",
+                    heroTitle: "Editor de Vídeo & Youtuber",
+                    heroCTA: "Ver Portfólio",
+                    aboutTitle: "Sobre Mim",
+                    aboutText: "Eu sou o Vsilva, Editor de vídeo e Youtuber com +5 anos de experiência. Especializado em edição de conteúdo gamer, storytelling e shorts de alta retenção. Cada vídeo é uma experiência bem planejada e pensada para entreter da melhor forma possível, por isso, quero trazer isso para meus clientes!",
+                    worksTitle: "Trabalhos Selecionados",
+                    shortsTitle: "Shorts & Reels",
+                    contactTitle: "Ficou interessado? Vamos conversar.",
+                    footerText: "© 2026 Vsilva. Todos os direitos reservados.",
+                    work1Title: "Eu fiz um clone de FRIDAY NIGHT FUNKIN em 24 HORAS!",
+                    work1Desc: "Vídeo com a intro bem cativante e chamativa",
+                    work2Title: "Como o Friday Night Funkin' reviveu em 2024?",
+                    work2Desc: "Vídeo longo com ótima consistência na edição",
+                    work3Title: "Como eu VENCI a FINAL DESTINATION GOD?",
+                    work3Desc: "Vídeo com o melhor storytelling que ja editei",
+                    work4Title: "Friday Night Funkin na vida real - Target Practice",
+                    work4Desc: "Vídeo que simula uma gameplay de friday night funkin na edição",
+                    work5Title: "Eu sobrevivi a uma chunk no Minecraft",
+                    work5Desc: "Edição para o cliente Nauj, com uma edição mais dinâmica e engraçada, arquivada no meu canal",
+                    work6Title: "Vsilva Direct 09.05.2026",
+                    work6Desc: "Vídeo mais recente com efeitos especiais do after effects",
+                    short1Title: "Sobre Poppy Playtime Capítulo 5",
+                    short2Title: "Gameplay sobre Friday Night Funkin",
+                    short3Title: "Curiosidade do Friday Night Funkin",
+                    short4Title: "Collab de FNF e Kpop",
+                },
+                en: {
+                    navAbout: "About",
+                    navPortfolio: "Portfolio",
+                    navContact: "Contact",
+                    heroTitle: "Video Editor & Youtuber",
+                    heroCTA: "View Portfolio",
+                    aboutTitle: "About Me",
+                    aboutText: "I’m Vsilva, a Video Editor and YouTuber with over 5 years of experience. Specialized in gaming content editing, storytelling, and high-retention short-form videos. Every video is a carefully planned experience designed to entertain in the best way possible, that’s exactly what I want to bring to my clients!",
+                    worksTitle: "Selected Works",
+                    shortsTitle: "Shorts & Reels",
+                    contactTitle: "Interested? Let's talk.",
+                    footerText: "© 2026 Vsilva. All rights reserved.",
+                    work1Title: "I Made a FRIDAY NIGHT FUNKIN Clone in 24 HOURS!",
+                    work1Desc: "Video with a very catchy and attention-grabbing intro",
+                    work2Title: "How Did Friday Night Funkin' Make a Comeback in 2024?",
+                    work2Desc: "Long-form video with highly consistent editing",
+                    work3Title: "How Did I BEAT FINAL DESTINATION GOD?",
+                    work3Desc: "Video with the best storytelling I’ve ever edited",
+                    work4Title: "Friday Night Funkin in Real Life - Target Practice",
+                    work4Desc: "Video that simulates Friday Night Funkin gameplay through editing",
+                    work5Title: "I survived in ONE chunk in Minecraft!",
+                    work5Desc: "Work for my client Nauj, with a more dynamic and fun editing style",
+                    work6Title: "Vsilva Direct 05.09.2026",
+                    work6Desc: "Most recent video featuring After Effects visual effects",
+                    short1Title: "About Poppy Playtime Chapter 5",
+                    short2Title: "Friday Night Funkin Gameplay",
+                    short3Title: "Friday Night Funkin Trivia",
+                    short4Title: "FNF x K-pop Collab",
+                }
+            };
+
+            const currentLang = localStorage.getItem("vsilva_lang") || "pt";
+            const elementsToTranslate = document.querySelectorAll("[data-i18n]");
+
+            const updateLanguage = (lang) => {
+                elementsToTranslate.forEach(el => {
+                    const key = el.getAttribute("data-i18n");
+                    if (translations[lang] && translations[lang][key]) {
+                        el.innerText = translations[lang][key];
+                    }
+                });
+
+                // Atualizar classes dos botões (desktop e mobile)
+                document.getElementById("lang-pt").classList.toggle("active", lang === "pt");
+                document.getElementById("lang-en").classList.toggle("active", lang === "en");
+                document.getElementById("lang-pt-mobile").classList.toggle("active", lang === "pt");
+                document.getElementById("lang-en-mobile").classList.toggle("active", lang === "en");
+
+                localStorage.setItem("vsilva_lang", lang);
+                document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
+            };
+
+            // Setar idioma inicial
+            updateLanguage(currentLang);
+
+            // Event Listeners Idioma (Desktop)
+            document.getElementById("lang-pt").addEventListener("click", () => updateLanguage("pt"));
+            document.getElementById("lang-en").addEventListener("click", () => updateLanguage("en"));
+
+            // Event Listeners Idioma (Mobile)
+            document.getElementById("lang-pt-mobile").addEventListener("click", () => updateLanguage("pt"));
+            document.getElementById("lang-en-mobile").addEventListener("click", () => updateLanguage("en"));
+
+            // 2. STICKY NAVBAR BACKGROUND
+            const navbar = document.getElementById("navbar");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            });
+
+            // 3. MENU MOBILE (HAMBURGER)
+            const hamburger = document.getElementById("hamburger");
+            const mobileMenu = document.getElementById("mobile-menu");
+            const mobileLinks = document.querySelectorAll(".mobile-link");
+
+            hamburger.addEventListener("click", () => {
+                mobileMenu.classList.toggle("active");
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener("click", () => {
+                    mobileMenu.classList.remove("active");
+                });
+            });
+
+            // 4. ANIMATION ON SCROLL (INTERSECTION OBSERVER)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach((el, index) => {
+                // Adiciona um pequeno delay baseado na ordem para efeito staggered, se estiverem juntos
+                if (el.classList.contains('card') || el.classList.contains('short-card')) {
+                    el.style.transitionDelay = `${(index % 6) * 0.1}s`;
+                }
+                observer.observe(el);
+            });
+
+            // 5. MODAL DE VÍDEO E IFRAME
+            const modal = document.getElementById('video-modal');
+            const modalIframe = document.getElementById('modal-iframe');
+            const closeModalBtn = document.querySelector('.close-modal');
+
+            // Abrir Modal
+            document.querySelectorAll('.card, .short-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const videoId = card.getAttribute('data-video-id');
+                    // Verifica se não é o ID placeholder padrão
+                    if (videoId && !videoId.includes('VIDEO_ID_') && !videoId.includes('SHORT_ID_')) {
+                        modalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    } else {
+                        // Placeholder preview
+                        console.log("Substitua o VIDEO_ID no código HTML para reproduzir.");
+                        modalIframe.src = `https://www.youtube.com/embed/jxGJzbKT1hk?autoplay=1&rel=0`; // Fallback p/ demo reel pra visualização
+                    }
+                    modal.classList.add('active');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden'; // Evita scroll do body
+                });
+            });
+
+            // Fechar Modal
+            const closeModal = () => {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                modalIframe.src = ""; // Remove o SRC para parar o vídeo
+                document.body.style.overflow = ''; // Restaura scroll
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', (e) => {
+                // Fecha se clicar fora do conteúdo
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Fechar modal com a tecla ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>
