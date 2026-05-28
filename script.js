@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
             work6Title: "Vsilva Direct 09.05.2026",
             work6Desc: "Vídeo mais recente com efeitos especiais do after effects",
             short1Title: "Sobre Poppy Playtime Capítulo 5",
-            short2Title: "Gameplay sobre Friday Night Funkin",
+            short2Title: "A coleção estranha da Kira",
             short3Title: "Curiosidade do Friday Night Funkin",
             short4Title: "Collab de FNF e Kpop",
         },
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             work6Title: "Vsilva Direct 05.09.2026",
             work6Desc: "Most recent video featuring After Effects visual effects",
             short1Title: "About Poppy Playtime Chapter 5",
-            short2Title: "Friday Night Funkin Gameplay",
+            short2Title: "Kira's strange collection",
             short3Title: "Friday Night Funkin Trivia",
             short4Title: "FNF x K-pop Collab",
         }
