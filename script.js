@@ -1,193 +1,263 @@
-document.addEventListener("DOMContentLoaded", () => {
+(() => {
+    'use strict';
+    const { selectedWorks, shorts, translations } = window.PORTFOLIO_DATA;
+    const dialog = document.getElementById('video-modal');
+    const frame = document.getElementById('player-frame');
+    const playerTitle = document.getElementById('player-title');
+    const externalLink = document.getElementById('player-external');
+    const videos = new Map([...selectedWorks, ...shorts].map(video => [video.id, video]));
+    let language = 'pt';
+    let returnFocus = null;
+    let activeVideo = null;
+    const backgroundVideo = document.getElementById('about-background-video');
+    const motionToggle = document.getElementById('motion-toggle');
+    const motionLabel = document.getElementById('motion-label');
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let userPausedMotion = false;
+    let aboutInView = false;
+    let backgroundLoaded = false;
 
-    // 1. SISTEMA DE IDIOMAS (TRADUÇÕES)
-    const translations = {
-        pt: {
-            navAbout: "Sobre",
-            navPortfolio: "Portfólio",
-            navContact: "Contato",
-            heroTitle: "Editor de Vídeo & Youtuber",
-            heroCTA: "Ver Portfólio",
-            aboutTitle: "Sobre Mim",
-            aboutText: "Eu sou o Vsilva, Editor de vídeo e Youtuber com +5 anos de experiência. Especializado em edição de conteúdo gamer, storytelling e shorts de alta retenção. Cada vídeo é uma experiência bem planejada e pensada para entreter da melhor forma possível, por isso, quero trazer isso para meus clientes!",
-            worksTitle: "Trabalhos Selecionados",
-            shortsTitle: "Shorts & Reels",
-            contactTitle: "Ficou interessado? Vamos conversar.",
-            footerText: "© 2026 Vsilva. Todos os direitos reservados.",
-            work1Title: "Eu fiz um clone de FRIDAY NIGHT FUNKIN em 24 HORAS!",
-            work1Desc: "Vídeo com a intro bem cativante e chamativa",
-            work2Title: "Como o Friday Night Funkin' reviveu em 2024?",
-            work2Desc: "Vídeo longo com ótima consistência na edição",
-            work3Title: "Como eu VENCI a FINAL DESTINATION GOD?",
-            work3Desc: "Vídeo com o melhor storytelling que ja editei",
-            work4Title: "Friday Night Funkin na vida real - Target Practice",
-            work4Desc: "Vídeo que simula uma gameplay de friday night funkin na edição",
-            work5Title: "Eu sobrevivi a uma chunk no Minecraft",
-            work5Desc: "Edição para o cliente Nauj, com uma edição mais dinâmica e engraçada, arquivada no meu canal",
-            work6Title: "Vsilva Direct 09.05.2026",
-            work6Desc: "Vídeo mais recente com efeitos especiais do after effects",
-            short1Title: "Sobre Poppy Playtime Capítulo 5",
-            short2Title: "Comissão de shorts para Kira #1",
-            short3Title: "Curiosidade do Friday Night Funkin",
-            short4Title: "Comissão de shorts para Kira #2",
-        },
-        en: {
-            navAbout: "About",
-            navPortfolio: "Portfolio",
-            navContact: "Contact",
-            heroTitle: "Video Editor & Youtuber",
-            heroCTA: "View Portfolio",
-            aboutTitle: "About Me",
-            aboutText: "I’m Vsilva, a Video Editor and YouTuber with over 5 years of experience. Specialized in gaming content editing, storytelling, and high-retention short-form videos. Every video is a carefully planned experience designed to entertain in the best way possible, that’s exactly what I want to bring to my clients!",
-            worksTitle: "Selected Works",
-            shortsTitle: "Shorts & Reels",
-            contactTitle: "Interested? Let's talk.",
-            footerText: "© 2026 Vsilva. All rights reserved.",
-            work1Title: "I Made a FRIDAY NIGHT FUNKIN Clone in 24 HOURS!",
-            work1Desc: "Video with a very catchy and attention-grabbing intro",
-            work2Title: "How Did Friday Night Funkin' Make a Comeback in 2024?",
-            work2Desc: "Long-form video with highly consistent editing",
-            work3Title: "How Did I BEAT FINAL DESTINATION GOD?",
-            work3Desc: "Video with the best storytelling I’ve ever edited",
-            work4Title: "Friday Night Funkin in Real Life - Target Practice",
-            work4Desc: "Video that simulates Friday Night Funkin gameplay through editing",
-            work5Title: "I survived in ONE chunk in Minecraft!",
-            work5Desc: "Work for my client Nauj, with a more dynamic and fun editing style",
-            work6Title: "Vsilva Direct 05.09.2026",
-            work6Desc: "Most recent video featuring After Effects visual effects",
-            short1Title: "About Poppy Playtime Chapter 5",
-            short2Title: "Shorts comission for Kira #1",
-            short3Title: "Friday Night Funkin Trivia",
-            short4Title: "Shorts comission for Kira #2",
-        }
+    // Storage may be disabled in private browsing or on a file:// preview.
+    try {
+        const saved = localStorage.getItem('vsilva_lang');
+        if (saved === 'pt' || saved === 'en') language = saved;
+        userPausedMotion = localStorage.getItem('vsilva_motion_paused') === 'true';
+    } catch { /* The page still works without persistent preferences. */ }
+
+    const t = key => translations[language][key];
+    const create = (tag, className, text) => {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (text !== undefined) element.textContent = text;
+        return element;
     };
+    const videoUrl = (video, vertical) => vertical
+        ? `https://www.youtube.com/shorts/${video.id}`
+        : `https://www.youtube.com/watch?v=${video.id}`;
 
-    const currentLang = localStorage.getItem("vsilva_lang") || "pt";
-    const elementsToTranslate = document.querySelectorAll("[data-i18n]");
+    function playbackLink(video, vertical, className) {
+        const link = create('a', className);
+        link.href = videoUrl(video, vertical);
+        link.dataset.videoId = video.id;
+        link.dataset.vertical = String(vertical);
+        return link;
+    }
 
-    const updateLanguage = (lang) => {
-        elementsToTranslate.forEach(el => {
-            const key = el.getAttribute("data-i18n");
-            if (translations[lang] && translations[lang][key]) {
-                el.innerText = translations[lang][key];
-            }
+    function renderCard(video, index, vertical) {
+        const card = create('article', vertical ? 'short-card' : 'work-card');
+        const title = video.title[language];
+        const link = playbackLink(video, vertical, 'video-link');
+        link.setAttribute('aria-label', t('watchAria') + title);
+        const image = create('img');
+        image.width = vertical ? 360 : 640;
+        image.height = vertical ? 640 : 360;
+        image.alt = t('thumbnail') + title;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        // Original thumbnails are retained. Local copies prevent network-dependent
+        // loading; hqdefault is the original URL if a copy cannot be loaded.
+        image.src = `assets/thumbnails/${video.id}.webp`;
+        image.addEventListener('error', () => {
+            if (image.dataset.fallback) return;
+            image.dataset.fallback = 'true';
+            image.src = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
         });
-
-        // Atualizar classes dos botões (desktop e mobile)
-        document.getElementById("lang-pt").classList.toggle("active", lang === "pt");
-        document.getElementById("lang-en").classList.toggle("active", lang === "en");
-        document.getElementById("lang-pt-mobile").classList.toggle("active", lang === "pt");
-        document.getElementById("lang-en-mobile").classList.toggle("active", lang === "en");
-
-        localStorage.setItem("vsilva_lang", lang);
-        document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
-    };
-
-    // Setar idioma inicial
-    updateLanguage(currentLang);
-
-    // Event Listeners Idioma (Desktop)
-    document.getElementById("lang-pt").addEventListener("click", () => updateLanguage("pt"));
-    document.getElementById("lang-en").addEventListener("click", () => updateLanguage("en"));
-
-    // Event Listeners Idioma (Mobile)
-    document.getElementById("lang-pt-mobile").addEventListener("click", () => updateLanguage("pt"));
-    document.getElementById("lang-en-mobile").addEventListener("click", () => updateLanguage("en"));
-
-    // 2. STICKY NAVBAR BACKGROUND
-    const navbar = document.getElementById("navbar");
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add("scrolled");
+        const number = create('span', 'video-number', String(index + 1).padStart(2, '0'));
+        number.setAttribute('aria-hidden', 'true');
+        const format = create('span', 'video-format', vertical ? '9:16' : '16:9');
+        format.setAttribute('aria-hidden', 'true');
+        const play = create('span', 'play-button');
+        play.setAttribute('aria-hidden', 'true');
+        // Fixed SVG only; all editable content is inserted with textContent.
+        play.innerHTML = '<svg viewBox="0 0 24 24" focusable="false"><path d="M8 5v14l11-7z"/></svg>';
+        link.append(image, number, format, play);
+        card.append(link);
+        if (!vertical) {
+            const meta = create('div', 'work-meta');
+            meta.append(create('span', '', video.category[language]), create('span', '', 'LONGFORM'));
+            card.append(meta);
+        }
+        const heading = create('h3');
+        const titleLink = playbackLink(video, vertical, 'title-link');
+        titleLink.textContent = title;
+        heading.append(titleLink);
+        card.append(heading);
+        if (vertical) {
+            card.append(create('p', 'short-category', video.category[language]));
         } else {
-            navbar.classList.remove("scrolled");
+            card.append(create('p', 'work-description', video.description[language]));
+            const watch = playbackLink(video, false, 'watch-link');
+            watch.setAttribute('aria-label', t('watchAria') + title);
+            const arrow = create('span', '', '↗');
+            arrow.setAttribute('aria-hidden', 'true');
+            watch.append(create('span', '', t('watch')), arrow);
+            card.append(watch);
         }
-    });
+        return card;
+    }
 
-    // 3. MENU MOBILE (HAMBURGER)
-    const hamburger = document.getElementById("hamburger");
-    const mobileMenu = document.getElementById("mobile-menu");
-    const mobileLinks = document.querySelectorAll(".mobile-link");
-
-    hamburger.addEventListener("click", () => {
-        mobileMenu.classList.toggle("active");
-    });
-
-    mobileLinks.forEach(link => {
-        link.addEventListener("click", () => {
-            mobileMenu.classList.remove("active");
+    function updateLanguage(nextLanguage) {
+        language = nextLanguage === 'en' ? 'en' : 'pt';
+        const attributes = [['data-i18n', null], ['data-i18n-aria', 'aria-label'], ['data-i18n-alt', 'alt']];
+        attributes.forEach(([dataAttribute, targetAttribute]) => {
+            document.querySelectorAll(`[${dataAttribute}]`).forEach(element => {
+                const value = t(element.getAttribute(dataAttribute));
+                if (value === undefined) return;
+                if (targetAttribute) element.setAttribute(targetAttribute, value);
+                else element.textContent = value;
+            });
         });
-    });
-
-    // 4. ANIMATION ON SCROLL (INTERSECTION OBSERVER)
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.15
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
+        document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+        document.querySelectorAll('[data-language]').forEach(button => {
+            button.setAttribute('aria-pressed', String(button.dataset.language === language));
         });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-up').forEach((el, index) => {
-        // Adiciona um pequeno delay baseado na ordem para efeito staggered, se estiverem juntos
-        if (el.classList.contains('card') || el.classList.contains('short-card')) {
-            el.style.transitionDelay = `${(index % 6) * 0.1}s`;
+        document.getElementById('works-grid').replaceChildren(...selectedWorks.map((video, index) => renderCard(video, index, false)));
+        document.getElementById('shorts-grid').replaceChildren(...shorts.map((video, index) => renderCard(video, index, true)));
+        document.querySelector('meta[name="description"]').content = t('metaDescription');
+        document.querySelector('meta[property="og:description"]').content = t('socialDescription');
+        document.querySelector('meta[name="twitter:description"]').content = t('socialDescription');
+        document.querySelector('meta[property="og:locale"]').content = language === 'pt' ? 'pt_BR' : 'en_US';
+        document.querySelector('meta[property="og:image:alt"]').content = t('socialAlt');
+        if (activeVideo) {
+            playerTitle.textContent = activeVideo.title[language];
+            const iframe = frame.querySelector('iframe');
+            if (iframe) iframe.title = t('playerTitle') + activeVideo.title[language];
         }
-        observer.observe(el);
+        syncMotion();
+        try { localStorage.setItem('vsilva_lang', language); } catch { /* Optional. */ }
+    }
+
+    function openVideo(video, vertical, trigger) {
+        // Modified clicks retain the real href, including opening a new tab.
+        if (typeof dialog.showModal !== 'function') {
+            window.location.assign(videoUrl(video, vertical));
+            return;
+        }
+        if (dialog.open) dialog.close();
+        returnFocus = trigger;
+        activeVideo = video;
+        playerTitle.textContent = video.title[language];
+        externalLink.href = videoUrl(video, vertical);
+        dialog.classList.toggle('is-vertical', vertical);
+        const iframe = create('iframe');
+        iframe.title = t('playerTitle') + video.title[language];
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        // Exactly one iframe, created only on user interaction.
+        iframe.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&playsinline=1`;
+        frame.replaceChildren(iframe);
+        document.body.classList.add('modal-open');
+        dialog.showModal();
+        syncMotion();
+        dialog.querySelector('.close-modal').focus();
+    }
+
+    document.querySelectorAll('[data-language]').forEach(button => {
+        button.addEventListener('click', () => updateLanguage(button.dataset.language));
     });
-
-    // 5. MODAL DE VÍDEO E IFRAME
-    const modal = document.getElementById('video-modal');
-    const modalIframe = document.getElementById('modal-iframe');
-    const closeModalBtn = document.querySelector('.close-modal');
-
-    // Abrir Modal
-    document.querySelectorAll('.card, .short-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const videoId = card.getAttribute('data-video-id');
-            // Verifica se não é o ID placeholder padrão
-            if (videoId && !videoId.includes('VIDEO_ID_') && !videoId.includes('SHORT_ID_')) {
-                modalIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-            } else {
-                // Placeholder preview
-                console.log("Substitua o VIDEO_ID no código HTML para reproduzir.");
-                modalIframe.src = `https://www.youtube.com/embed/jxGJzbKT1hk?autoplay=1&rel=0`; // Fallback p/ demo reel pra visualização
-            }
-            modal.classList.add('active');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden'; // Evita scroll do body
-        });
+    document.addEventListener('click', event => {
+        const link = event.target.closest('a[data-video-id]');
+        if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        const video = videos.get(link.dataset.videoId);
+        if (!video) return;
+        event.preventDefault();
+        openVideo(video, link.dataset.vertical === 'true', link);
     });
-
-    // Fechar Modal
-    const closeModal = () => {
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-        modalIframe.src = ""; // Remove o SRC para parar o vídeo
-        document.body.style.overflow = ''; // Restaura scroll
-    };
-
-    closeModalBtn.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-        // Fecha se clicar fora do conteúdo
-        if (e.target === modal) {
-            closeModal();
+    dialog.querySelector('.close-modal').addEventListener('click', () => dialog.close());
+    // Native Escape handling also calls this cleanup via the close event.
+    dialog.addEventListener('close', () => {
+        frame.replaceChildren(); // Destroy the browsing context: playback stops.
+        document.body.classList.remove('modal-open');
+        activeVideo = null;
+        syncMotion();
+        if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+        returnFocus = null;
+    });
+    // Keep Tab within the first/last controls even when browser chrome would
+    // otherwise receive focus. The native dialog handles the iframe interior.
+    dialog.addEventListener('keydown', event => {
+        if (event.key !== 'Tab') return;
+        const first = dialog.querySelector('.close-modal');
+        const last = externalLink;
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
         }
     });
-
-    // Fechar modal com a tecla ESC
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
+    let backdropPress = false;
+    dialog.addEventListener('pointerdown', event => { backdropPress = event.target === dialog; });
+    dialog.addEventListener('click', event => {
+        if (backdropPress && event.target === dialog) dialog.close();
+        backdropPress = false;
     });
 
-});
+    // Decorative motion is optional, pauses out of view, and never competes
+    // with a portfolio player. Video sources are only attached when needed.
+    function syncMotion() {
+        const paused = userPausedMotion || motionPreference.matches || document.hidden || dialog.open;
+        document.body.classList.toggle('motion-paused', paused);
+        motionToggle.hidden = motionPreference.matches;
+        motionToggle.setAttribute('aria-pressed', String(userPausedMotion));
+        motionLabel.textContent = t(userPausedMotion ? 'motionResume' : 'motionPause');
+        if (paused || !aboutInView) {
+            backgroundVideo.pause();
+            return;
+        }
+        if (!backgroundLoaded) {
+            backgroundVideo.querySelectorAll('source[data-src]').forEach(source => {
+                source.src = source.dataset.src;
+            });
+            backgroundVideo.muted = true;
+            backgroundVideo.load();
+            backgroundLoaded = true;
+        }
+        backgroundVideo.play().catch(() => { /* The poster remains if autoplay is unavailable. */ });
+    }
+    motionToggle.addEventListener('click', () => {
+        userPausedMotion = !userPausedMotion;
+        try { localStorage.setItem('vsilva_motion_paused', String(userPausedMotion)); } catch { /* Optional. */ }
+        syncMotion();
+    });
+    motionPreference.addEventListener('change', syncMotion);
+    document.addEventListener('visibilitychange', syncMotion);
+    if ('IntersectionObserver' in window) {
+        const motionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                entry.target.classList.toggle('is-in-view', entry.isIntersecting);
+                if (entry.target.id === 'about') {
+                    aboutInView = entry.isIntersecting;
+                    syncMotion();
+                }
+            });
+        }, { threshold: 0 });
+        document.querySelectorAll('.wave-section, #about').forEach(section => motionObserver.observe(section));
+    } else {
+        aboutInView = true;
+        document.querySelectorAll('.wave-section').forEach(section => section.classList.add('is-in-view'));
+    }
+
+    const header = document.getElementById('navbar');
+    const syncHeader = () => header.classList.toggle('scrolled', window.scrollY > 20);
+    window.addEventListener('scroll', syncHeader, { passive: true });
+    syncHeader();
+    // Active section feedback without changing the URL or interfering with scroll.
+    if ('IntersectionObserver' in window) {
+        const navigationLinks = document.querySelectorAll('.main-nav a');
+        const sectionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                navigationLinks.forEach(link => {
+                    if (link.hash === `#${entry.target.id}`) link.setAttribute('aria-current', 'location');
+                    else link.removeAttribute('aria-current');
+                });
+            });
+        }, { rootMargin: '-15% 0px -60% 0px', threshold: 0 });
+        document.querySelectorAll('main > section').forEach(section => sectionObserver.observe(section));
+    }
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    updateLanguage(language);
+})();
