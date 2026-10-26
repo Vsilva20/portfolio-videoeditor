@@ -75,8 +75,8 @@ O Discord original tinha usuário `vsilva` com `href="#"`. O usuário foi preser
 ## Atualização visual — Sobre, princípios e ondas
 
 - Sobre e princípios agora fazem parte da mesma seção, com a biografia e a arte Vsilva Normal no grid principal e os princípios logo abaixo, sobre o mesmo fundo contínuo. A âncora #process foi preservada dentro do bloco.
-- Ondas vetoriais em cinco tons de verde no hero, trabalhos, Shorts e rodapé. O Sobre/princípios permanece sem ondas, com o vídeo original de fundo otimizado e uma camada escura para leitura.
-- As ondas só animam quando a respectiva área está visível. O fundo em vídeo só carrega ao chegar ao Sobre e pausa fora dele, em abas ocultas ou durante a reprodução de um trabalho do portfólio.
+- Ondas em cinco tons de verde no hero, trabalhos, Shorts e rodapé. O vetor editável fica em assets/green-waves.svg e a página reutiliza uma versão WebP sem perdas de 20.372 bytes, com movimento por transform. O Sobre/princípios permanece sem ondas.
+- As ondas só animam quando a respectiva área está visível. Sua imagem é pré-carregada e decodificada antes de animar. O loader inicial baixa o vídeo completo antes de revelar o site; a reprodução só ocorre com o bloco Sobre visível. O vídeo pausa fora dele, em abas ocultas ou durante um trabalho do portfólio.
 - Controle PT/EN para pausar/retomar as animações; preferência persistida em localStorage (vsilva_motion_paused). prefers-reduced-motion desativa as ondas e usa uma imagem estática do vídeo.
 
 ### Compressão
@@ -101,3 +101,37 @@ O WebM é **93,9% menor** que o arquivo original e mantém a sequência inteira 
 - Regressão do player: abertura por Enter, pausa das animações durante o modal, Escape, remoção do iframe e retorno do foco ao card passaram.
 - Console sem erros/avisos na revisão. Os hashes do MP4 original e da arte Vsilva Normal permaneceram iguais.
 - A regra de movimento reduzido foi conferida no código; a preferência do sistema operacional não foi alterada durante a validação.
+
+## Refinamento — primeira tela, navegação e desempenho
+
+- Hero com altura mínima de 100svh, contando o header fixo sobreposto. Em PT e EN, a altura coincidiu exatamente com a viewport nos cinco tamanhos testados. Arte e tipografia ajustam ao espaço disponível; a mensagem e os botões continuam antes da ilustração no celular.
+- Sobre ampliado: cerca de 1.165 px em 1440 × 900, em comparação aos aproximadamente 870 px da versão anterior. Biografia, arte e princípios continuam unidos.
+- Removidas etiquetas numeradas de seção, contagens de projetos, legendas repetidas, textos do adesivo do hero, formatos sobre as thumbnails e rótulos decorativos dos cases.
+- Header flutuante com monograma, destaque da navegação, CTA e barra de progresso. A barra usa transform e uma atualização agrupada por requestAnimationFrame; foi conferida em 0%, posição intermediária e 100%.
+- Gradientes nas bordas dos estudos de caso substituem a passagem abrupta entre fundos escuros e claros. As ondas também desaparecem gradualmente nas bordas das seções, e o Sobre termina com um esmaecimento para o contato.
+- A animação passou de 20 caminhos SVG animados para quatro camadas WebP reutilizadas, sem dependências. O SVG original da composição permanece editável no projeto.
+- A abertura passou a usar uma tela de carregamento bloqueante. Imagens, fontes, ondas e o arquivo completo do vídeo são preparados antes da exibição; a preferência por movimento reduzido continua controlando as animações e a reprodução.
+- No navegador, ainda no hero, a imagem das ondas já estava decodificada e o WebM tinha readyState 4, pausado e pronto para entrar no Sobre. Ao reproduzir, o vídeo aparece suavemente sobre o poster.
+- PT/EN em 360 × 800, 390 × 844, 768 × 1024, 1024 × 768 e 1440 × 900: sem transbordamento; header inteiramente dentro da tela; hero com a altura da viewport.
+- Regressão de um player longo e de um Short: abertura, proporção vertical, pausa das animações, Escape, destruição do iframe e retorno do foco passaram.
+- Console sem erros ou avisos. node tools/verify.cjs e git diff --check passaram. Estas verificações confirmam carregamento e comportamento; não foi realizado benchmark de FPS em dispositivos físicos.
+
+## Tela de carregamento, rodapé e ícones
+
+- Loader de tela inteira com identidade Vsilva e progresso real de recursos. A página fica invisível, sem rolagem e com inert/aria-hidden até o carregamento concluir. Não há tempo mínimo artificial nem liberação automática por prazo.
+- São aguardadas todas as imagens da página, poster, favicon, fontes e estilos. O vídeo compatível (WebM ou fallback MP4) é baixado integralmente via fetch, transformado em uma URL Blob local e preparado pelo player. Assim, a entrada no Sobre reutiliza o arquivo já disponível na memória. Players do YouTube continuam sob demanda.
+- Se o recurso essencial falhar ou exceder o prazo de carregamento, o conteúdo permanece bloqueado e o loader oferece Tentar novamente. A tentativa reutiliza recursos já preparados quando possível.
+- Preferência PT/EN é aplicada também ao loader. Sem JavaScript, o bloqueio não é ativado e os links alternativos continuam acessíveis.
+- Contato e rodapé agora usam o mesmo azul escuro do site com ondas verdes; o esmaecimento no final do Sobre acompanha essa cor.
+- Nauj: cópia exata de D:/Canais/Nauj/nauj-icon.png em assets/nauj-icon.png (1.385 bytes). A identidade pixelada foi mantida.
+- Kira: D:/Websites/kira-icon.jpg convertido para assets/kira-icon.webp (29.044 bytes), sem alterar o original. Ambos aparecem junto aos nomes nos cases.
+
+### Verificação desta entrega
+
+- Carregamento normal: loader chegou a 100%, todas as imagens prontas, fontes loaded e vídeo readyState 4 em URL Blob; só então o conteúdo ficou visível e deixou de ser inert.
+- Conexão lenta simulada em servidor local separado: tela permaneceu visível em 39%, com o site oculto/inert e vídeo ainda sem dados; concluiu em 100% após a transferência.
+- Falha de mídia simulada: loader exibiu erro e Tentar novamente, mantendo o conteúdo oculto. Após restaurar o servidor, a nova tentativa concluiu em 100% sem recarregar a página.
+- Os controles PREVIEW_MEDIA_DELAY_MS e PREVIEW_MEDIA_FAILURE pertencem somente a tools/serve.cjs para QA local; não afetam a publicação estática.
+- PT/EN, inclusive preferência após recarregar, em 360, 390, 768, 1024 e 1440 px sem transbordamento. Avatares carregados nos dois idiomas.
+- Contato e rodapé com background rgb(8, 11, 27), ondas presentes e originais preservados. Player longo abriu após a liberação e fechou por Escape, com fundo pausado durante o modal.
+- node tools/verify.cjs e git diff --check passaram. Console da execução normal sem erros/avisos; os HTTP 503 do servidor de falha eram deliberados.

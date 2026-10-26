@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" preserveAspectRatio="none" focusable="false">
+                    <path class="wave-layer" fill="#123f32" d="M-200 790C80 590 200 900 420 730S720 780 900 460S1210 270 1430 310S1630 70 1800 140V1200H-200Z"/>
+                    <path class="wave-layer" fill="#1b5b3d" d="M-200 870C60 690 230 970 470 810S750 840 960 560S1250 350 1470 390S1670 180 1800 230V1200H-200Z"/>
+                    <path class="wave-layer" fill="#307d45" d="M-200 950C80 800 240 1030 510 890S810 910 1020 660S1310 440 1510 480S1700 300 1800 330V1200H-200Z"/>
+                    <path class="wave-layer" fill="#5baf55" d="M-200 1040C100 910 280 1100 580 980S870 990 1090 770S1360 550 1580 590S1740 420 1800 450V1200H-200Z"/>
+                    <path class="wave-layer" fill="#9ff26b" d="M-200 1130C100 1010 360 1190 640 1070S930 1080 1160 880S1410 660 1640 710S1770 540 1800 570V1200H-200Z"/>
+                </svg>

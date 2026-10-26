@@ -27,15 +27,32 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://i.ytimg.com">
     <link rel="preload" as="image" href="assets/vsilva-avatar.webp">
+    <link rel="preload" as="image" href="assets/green-waves.webp">
+    <script>document.documentElement.classList.add('is-loading');</script>
+    <style>
+        html{background:#080b1b}.site-loader{display:none;position:fixed;inset:0;z-index:1000;place-items:center;background:#080b1b;color:#f7fdfb}
+        html.is-loading,html.is-loading body{overflow:hidden}html.is-loading #site-content{visibility:hidden}html.is-loading .site-loader{display:grid}
+    </style>
     <link rel="stylesheet" href="style.css">
     <script src="content.js" defer></script>
     <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="site-loader" id="site-loader" role="dialog" aria-modal="true" aria-labelledby="loader-title" tabindex="-1">
+        <div class="loader-content">
+            <div class="loader-brand" aria-hidden="true"><span class="loader-mark">V</span>VSILVA<span>.</span></div>
+            <p id="loader-title" data-i18n="loaderTitle">Preparando seu portfólio.</p>
+            <div class="loader-progress-row"><span id="loader-status" role="status" aria-live="polite" data-i18n="loaderStatus">Carregando imagens, fontes e vídeo…</span><span class="loader-percent" aria-hidden="true"><span id="loader-percentage">0</span>%</span></div>
+            <div class="loader-meter" id="loader-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Carregamento do site" data-i18n-aria="loaderProgress"><span id="loader-fill"></span></div>
+            <a class="loader-retry" id="loader-retry" href="" hidden data-i18n="loaderRetry">Tentar novamente</a>
+        </div>
+    </div>
+    <div id="site-content">
+
     <a class="skip-link" href="#main" data-i18n="skip">Pular para o conteúdo</a>
     <header class="site-header" id="navbar">
         <div class="container header-inner">
-            <a class="wordmark" href="#hero" aria-label="Vsilva — início" data-i18n-aria="home">VSILVA<span>.</span></a>
+            <a class="wordmark" href="#hero" aria-label="Vsilva — início" data-i18n-aria="home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M2 4h6l4 10 5-10h6l-8 16H9Z"/></svg></span>VSILVA<span>.</span></a>
             <nav class="main-nav" aria-label="Navegação principal" data-i18n-aria="navigation">
                 <a href="#portfolio" data-i18n="navWorks">Trabalhos</a>
                 <a href="#about" data-i18n="navAbout">Sobre</a>
@@ -50,93 +67,65 @@
                 <a class="header-cta" href="mailto:victorhugo.web11@gmail.com"><span data-i18n="letsTalk">Vamos conversar</span><span aria-hidden="true">↗</span></a>
             </div>
         </div>
+        <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-fill"></span></div>
     </header>
     <main id="main">
         <section class="hero wave-section" id="hero" aria-labelledby="hero-title">
-            <div class="section-waves" aria-hidden="true">
-                <svg viewBox="0 0 1600 1000" preserveAspectRatio="none" focusable="false">
-                    <path class="wave-layer" fill="#123f32" d="M-200 790C80 590 200 900 420 730S720 780 900 460S1210 270 1430 310S1630 70 1800 140V1200H-200Z"/>
-                    <path class="wave-layer" fill="#1b5b3d" d="M-200 870C60 690 230 970 470 810S750 840 960 560S1250 350 1470 390S1670 180 1800 230V1200H-200Z"/>
-                    <path class="wave-layer" fill="#307d45" d="M-200 950C80 800 240 1030 510 890S810 910 1020 660S1310 440 1510 480S1700 300 1800 330V1200H-200Z"/>
-                    <path class="wave-layer" fill="#5baf55" d="M-200 1040C100 910 280 1100 580 980S870 990 1090 770S1360 550 1580 590S1740 420 1800 450V1200H-200Z"/>
-                    <path class="wave-layer" fill="#9ff26b" d="M-200 1130C100 1010 360 1190 640 1070S930 1080 1160 880S1410 660 1640 710S1770 540 1800 570V1200H-200Z"/>
-                </svg>
-            </div>
+            <div class="section-waves" aria-hidden="true"><img class="wave-surface" src="assets/green-waves.webp" width="1600" height="1000" alt="" decoding="async"></div>
             <div class="container hero-grid">
                 <div class="hero-copy">
-                    <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> VIDEO EDITOR / CONTENT CREATOR</p>
+                    <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> <span data-i18n="heroRole">Editor de vídeo &amp; criador de conteúdo</span></p>
                     <h1 id="hero-title"><span data-i18n="heroLine1">Conteúdo gamer</span><br><span data-i18n="heroLine2">com ritmo e</span><br><em data-i18n="heroLine3">personalidade.</em></h1>
-                    <p class="hero-description" data-i18n="heroDescription">Sou Vsilva. Transformo gameplays, análises e histórias do universo gamer em vídeos envolventes. Narrativa, humor e atenção a quem está do outro lado da tela.</p>
+                    <p class="hero-description" data-i18n="heroDescription">Sou Vsilva, editor e criador de conteúdo gamer. Transformo gameplays, análises e histórias em vídeos com narrativa e humor.</p>
                     <div class="hero-actions">
-                        <a class="button button-lime" href="#portfolio"><span data-i18n="viewWorks">Ver meus trabalhos</span><span aria-hidden="true">↘</span></a>
+                        <a class="button button-lime" href="#portfolio"><span data-i18n="viewWorks">Ver trabalhos</span><span aria-hidden="true">↘</span></a>
                         <a class="text-link" href="#contact"><span data-i18n="getInTouch">Entre em contato</span><span aria-hidden="true">↗</span></a>
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <div class="art-topline" aria-hidden="true"><span>VS / ORIGINAL CHARACTER</span><span>01 — 26</span></div>
                     <div class="portrait-frame">
                         <img class="hero-portrait" src="assets/vsilva-avatar.webp" width="800" height="800" alt="Personagem ilustrado de Vsilva, com cabelo vinho, óculos e roupa verde." data-i18n-alt="avatarAlt" fetchpriority="high">
                         <span class="crop-mark crop-tl" aria-hidden="true"></span><span class="crop-mark crop-br" aria-hidden="true"></span>
                     </div>
-                    <span class="art-sticker" aria-hidden="true">MADE OF<br>GAMES &amp;<br>STORIES.<span>✳</span></span>
-                    <div class="art-caption"><span class="small-cross" aria-hidden="true">+</span><span data-i18n="artCaption">Criador por experiência. Editor por escolha.</span></div>
                 </div>
             </div>
-            <div class="container hero-bottom"><span class="mono" data-i18n="heroNiche">CONTEÚDO GAMER &amp; GAMEPLAY</span><a href="#portfolio"><span data-i18n="scrollWorks">Explore os trabalhos</span><span aria-hidden="true">↓</span></a><span class="mono hero-location" data-i18n="locationLabel">BRASIL / WORLDWIDE</span></div>
+            <div class="hero-scroll"><a href="#portfolio" aria-label="Explore os trabalhos" data-i18n-aria="scrollWorks"><span aria-hidden="true">↓</span></a></div>
         </section>
         <section class="section works-section wave-section" id="portfolio" aria-labelledby="works-title">
-            <div class="section-waves" aria-hidden="true">
-                <svg viewBox="0 0 1600 1000" preserveAspectRatio="none" focusable="false">
-                    <path class="wave-layer" fill="#123f32" d="M-200 790C80 590 200 900 420 730S720 780 900 460S1210 270 1430 310S1630 70 1800 140V1200H-200Z"/>
-                    <path class="wave-layer" fill="#1b5b3d" d="M-200 870C60 690 230 970 470 810S750 840 960 560S1250 350 1470 390S1670 180 1800 230V1200H-200Z"/>
-                    <path class="wave-layer" fill="#307d45" d="M-200 950C80 800 240 1030 510 890S810 910 1020 660S1310 440 1510 480S1700 300 1800 330V1200H-200Z"/>
-                    <path class="wave-layer" fill="#5baf55" d="M-200 1040C100 910 280 1100 580 980S870 990 1090 770S1360 550 1580 590S1740 420 1800 450V1200H-200Z"/>
-                    <path class="wave-layer" fill="#9ff26b" d="M-200 1130C100 1010 360 1190 640 1070S930 1080 1160 880S1410 660 1640 710S1770 540 1800 570V1200H-200Z"/>
-                </svg>
-            </div>
+            <div class="section-waves" aria-hidden="true"><img class="wave-surface" src="assets/green-waves.webp" width="1600" height="1000" alt="" decoding="async"></div>
             <div class="container">
                 <div class="section-heading">
-                    <div><p class="section-index"><span>01 /</span> <span data-i18n="selectedLabel">PORTFÓLIO SELECIONADO</span></p><h2 id="works-title" data-i18n="worksTitle">Dê o play.</h2></div>
+                    <div><h2 id="works-title" data-i18n="worksTitle">Trabalhos selecionados</h2></div>
                     <p class="section-intro" data-i18n="worksIntro">De gameplays e desafios a documentários e histórias. Cada vídeo, uma forma de contar.</p>
                 </div>
-                <div class="works-toolbar"><span data-i18n="longform">Trabalhos selecionados / Longform</span><span class="mono">04 <span data-i18n="projects">PROJETOS</span></span></div>
                 <div class="works-grid" id="works-grid"></div>
                 <noscript><p>JavaScript está desativado. Assista aos trabalhos diretamente no YouTube:</p><ul><li><a href="https://www.youtube.com/watch?v=jxGJzbKT1hk">Clone de Friday Night Funkin em 24 horas</a></li><li><a href="https://www.youtube.com/watch?v=K36QHbpJZns">Como o Friday Night Funkin' reviveu em 2024?</a></li><li><a href="https://www.youtube.com/watch?v=hi9s-pHsD5Y">Sobrevivi a uma chunk no Minecraft - Nauj</a></li><li><a href="https://www.youtube.com/watch?v=Xz06qz9xZEc">A Vsilva Direct sobre minha vida - 09.05.2026</a></li></ul></noscript>
             </div>
         </section>
         <section class="section shorts-section wave-section" id="shortform" aria-labelledby="shorts-title">
-            <div class="section-waves" aria-hidden="true">
-                <svg viewBox="0 0 1600 1000" preserveAspectRatio="none" focusable="false">
-                    <path class="wave-layer" fill="#123f32" d="M-200 790C80 590 200 900 420 730S720 780 900 460S1210 270 1430 310S1630 70 1800 140V1200H-200Z"/>
-                    <path class="wave-layer" fill="#1b5b3d" d="M-200 870C60 690 230 970 470 810S750 840 960 560S1250 350 1470 390S1670 180 1800 230V1200H-200Z"/>
-                    <path class="wave-layer" fill="#307d45" d="M-200 950C80 800 240 1030 510 890S810 910 1020 660S1310 440 1510 480S1700 300 1800 330V1200H-200Z"/>
-                    <path class="wave-layer" fill="#5baf55" d="M-200 1040C100 910 280 1100 580 980S870 990 1090 770S1360 550 1580 590S1740 420 1800 450V1200H-200Z"/>
-                    <path class="wave-layer" fill="#9ff26b" d="M-200 1130C100 1010 360 1190 640 1070S930 1080 1160 880S1410 660 1640 710S1770 540 1800 570V1200H-200Z"/>
-                </svg>
-            </div>
+            <div class="section-waves" aria-hidden="true"><img class="wave-surface" src="assets/green-waves.webp" width="1600" height="1000" alt="" decoding="async"></div>
             <div class="container">
-                <div class="section-heading compact-heading"><div><p class="section-index"><span>02 /</span> <span data-i18n="shortsLabel">PEQUENO FORMATO. GRANDES IDEIAS.</span></p><h2 id="shorts-title">Shortform<span class="title-dot">.</span></h2></div><p class="section-intro" data-i18n="shortsIntro">Humor, narrativa e timing. A mesma atenção à edição, em poucos segundos.</p></div>
+                <div class="section-heading compact-heading"><div><h2 id="shorts-title">Shortform<span class="title-dot">.</span></h2></div><p class="section-intro" data-i18n="shortsIntro">Humor, narrativa e timing. A mesma atenção à edição, em poucos segundos.</p></div>
                 <div class="shorts-grid" id="shorts-grid"></div>
                 <noscript><ul><li><a href="https://www.youtube.com/shorts/wnVbTi--B88">Sobre Poppy Playtime Capítulo 5</a></li><li><a href="https://www.youtube.com/shorts/XkuZClfl1vU">Comissão de shorts para Kira #1</a></li><li><a href="https://www.youtube.com/shorts/QWzPPFDzfdU">Curiosidade do Friday Night Funkin</a></li><li><a href="https://www.youtube.com/shorts/C1Bz6Pm6__c">Comissão de shorts para Kira #2</a></li></ul></noscript>
-                <div class="section-footnote"><span class="mono">9:16 / SHORTS &amp; REELS</span><span data-i18n="shortsFootnote">O formato muda. A personalidade fica.</span></div>
             </div>
         </section>
         <section class="section cases-section" id="cases" aria-labelledby="cases-title">
             <div class="container">
-                <div class="section-heading"><div><p class="section-index"><span>03 /</span> <span data-i18n="casesLabel">DECISÕES QUE CONTAM HISTÓRIAS</span></p><h2 id="cases-title" data-i18n="casesTitle">Além dos cortes.</h2></div><p class="section-intro" data-i18n="casesIntro">Cada criador tem um ritmo, uma linguagem e uma história. A edição precisa entender isso.</p></div>
+                <div class="section-heading"><div><h2 id="cases-title" data-i18n="casesTitle">Além dos cortes.</h2></div><p class="section-intro" data-i18n="casesIntro">Cada criador tem um ritmo, uma linguagem e uma história. A edição precisa entender isso.</p></div>
                 <article class="case-row">
-                    <div class="case-art case-nauj" aria-hidden="true"><div class="case-art-meta"><span>CREATOR STUDY / 01</span><span>MINECRAFT</span></div><div class="nauj-pixels"><i></i><i></i><i></i><i></i><i></i></div><span class="creator-name">NAUJ<span>↗</span></span><div class="case-timeline"><i></i><i></i><i></i><i></i><i></i><i></i><span></span></div><span class="case-art-bottom">GAMEPLAY → STORY</span></div>
-                    <div class="case-copy"><p class="eyebrow" data-i18n="naujType">NAUJ / MINECRAFT, MODS &amp; DESAFIOS</p><h3 data-i18n="naujTitle">O desafio vira história.</h3><p data-i18n="naujDescription">Nos vídeos do Nauj, a prioridade foi transformar gravações extensas de gameplay em narrativas divertidas e fáceis de acompanhar.</p><dl><div><dt data-i18n="challenge">O desafio</dt><dd data-i18n="naujChallenge">Dar clareza à progressão de cada desafio sem perder os acontecimentos que fazem a gameplay valer a pena.</dd></div><div><dt data-i18n="approach">A edição</dt><dd data-i18n="naujApproach">Seleção de clipes, humor e ritmo de cena para sustentar a história, sem excesso de efeitos competindo com o conteúdo.</dd></div></dl><div class="tags"><span>STORYTELLING</span><span>PACING</span><span>HUMOR</span></div></div>
+                    <div class="case-art case-nauj" aria-hidden="true"><img class="creator-avatar avatar-nauj" src="assets/nauj-icon.png" width="345" height="342" alt="" decoding="async"><div class="nauj-pixels"><i></i><i></i><i></i><i></i><i></i></div><span class="creator-name">NAUJ<span>↗</span></span><div class="case-timeline"><i></i><i></i><i></i><i></i><i></i><i></i><span></span></div></div>
+                    <div class="case-copy"><p class="eyebrow" data-i18n="naujType">NAUJ / MINECRAFT, MODS &amp; DESAFIOS</p><h3 data-i18n="naujTitle">O desafio vira história.</h3><p data-i18n="naujDescription">Nos vídeos do Nauj, a prioridade foi transformar gravações extensas de gameplay em narrativas divertidas e fáceis de acompanhar.</p><dl><div><dt data-i18n="challenge">O desafio</dt><dd data-i18n="naujChallenge">Dar clareza à progressão de cada desafio sem perder os acontecimentos que fazem a gameplay valer a pena.</dd></div><div><dt data-i18n="approach">A edição</dt><dd data-i18n="naujApproach">Seleção de clipes, humor e ritmo de cena para sustentar a história, sem excesso de efeitos competindo com o conteúdo.</dd></div></dl></div>
                 </article>
                 <article class="case-row case-reverse">
-                    <div class="case-art case-kira" aria-hidden="true"><div class="case-art-meta"><span>CREATOR STUDY / 02</span><span>VTUBER</span></div><span class="kira-quote">“</span><span class="creator-name">Kira<span>Hishotori</span></span><div class="sound-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="case-art-bottom">CONVERSATION → CONNECTION</span></div>
-                    <div class="case-copy"><p class="eyebrow" data-i18n="kiraType">KIRAHISHOTORI / CONVERSAS &amp; COTIDIANO</p><h3 data-i18n="kiraTitle">A personalidade fica.</h3><p data-i18n="kiraDescription">Para os relatos e conversas da KiraHishotori, o ponto de partida foi preservar a espontaneidade enquanto a história ganha forma.</p><dl><div><dt data-i18n="challenge">O desafio</dt><dd data-i18n="kiraChallenge">Organizar experiências e assuntos em uma progressão clara, envolvente e fiel à personalidade da criadora.</dd></div><div><dt data-i18n="approach">A edição</dt><dd data-i18n="kiraApproach">Reorganização dos clipes, timing de falas e reações, sonorização e memes usados no contexto certo.</dd></div></dl><div class="tags"><span>CONTENT STRUCTURE</span><span>TIMING</span><span>SOUND DESIGN</span></div></div>
+                    <div class="case-art case-kira" aria-hidden="true"><img class="creator-avatar avatar-kira" src="assets/kira-icon.webp" width="400" height="400" alt="" decoding="async"><span class="kira-quote">“</span><span class="creator-name">Kira<span>Hishotori</span></span><div class="sound-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+                    <div class="case-copy"><p class="eyebrow" data-i18n="kiraType">KIRAHISHOTORI / CONVERSAS &amp; COTIDIANO</p><h3 data-i18n="kiraTitle">A personalidade fica.</h3><p data-i18n="kiraDescription">Para os relatos e conversas da KiraHishotori, o ponto de partida foi preservar a espontaneidade enquanto a história ganha forma.</p><dl><div><dt data-i18n="challenge">O desafio</dt><dd data-i18n="kiraChallenge">Organizar experiências e assuntos em uma progressão clara, envolvente e fiel à personalidade da criadora.</dd></div><div><dt data-i18n="approach">A edição</dt><dd data-i18n="kiraApproach">Reorganização dos clipes, timing de falas e reações, sonorização e memes usados no contexto certo.</dd></div></dl></div>
                 </article>
             </div>
         </section>
         <section class="section about-section" id="about" aria-labelledby="about-title">
             <div class="about-background" aria-hidden="true">
-                <video id="about-background-video" muted loop playsinline preload="none" poster="assets/media/bg-site-poster.webp" tabindex="-1" disablepictureinpicture>
+                <video id="about-background-video" muted loop playsinline preload="auto" poster="assets/media/bg-site-poster.webp" tabindex="-1" disablepictureinpicture>
                     <source data-src="assets/media/bg-site.webm" type="video/webm">
                     <source data-src="assets/media/bg-site-fallback.mp4" type="video/mp4">
                 </video>
@@ -144,7 +133,8 @@
             <div class="container about-story">
                 <div class="about-grid">
                     <div class="about-copy">
-                        <p class="section-index"><span>04 /</span> <span data-i18n="aboutLabel">QUEM ESTÁ NA TIMELINE</span></p>
+                        <p class="eyebrow" data-i18n="aboutEyebrow">Sobre mim</p>
+
                         <h2 id="about-title"><span data-i18n="aboutTitle1">Editor, criador.</span><br><span data-i18n="aboutTitle2">Gamer também.</span></h2>
                         <p class="about-lead" data-i18n="aboutLead">Sou Vsilva, editor de vídeo e criador de conteúdo. Games e storytelling fazem parte dos dois lados da minha tela.</p>
                         <p data-i18n="aboutText">Com mais de cinco anos de experiência e minha própria trajetória no YouTube, aprendi a olhar para o ritmo, o humor e a clareza de cada vídeo. Trabalho com gameplays, desafios, análises, documentários e conteúdo vertical.</p>
@@ -153,11 +143,10 @@
                     </div>
                     <figure class="about-art">
                         <div class="about-image-wrap"><img src="assets/vsilva-normal.webp" width="960" height="960" alt="Arte original Vsilva Normal: personagem de cabelo vinho, óculos e roupa verde." data-i18n-alt="aboutAlt" loading="lazy"></div>
-                        <figcaption class="about-art-caption"><span class="wordmark">VSILVA<span>.</span></span><span class="mono" data-i18n="aboutArtCaption">ENTRE GAMES E HISTÓRIAS</span></figcaption>
                     </figure>
                 </div>
                 <div class="about-principles" id="process" aria-labelledby="process-title">
-                    <div class="principles-heading"><h3 id="process-title" data-i18n="processTitle">Antes do efeito, a ideia.</h3><p data-i18n="processIntro">Três princípios que guiam minhas decisões na timeline.</p></div>
+                    <div class="principles-heading"><h3 id="process-title" data-i18n="processTitle">Antes do efeito, a ideia.</h3></div>
                     <div class="process-grid">
                         <article><span class="process-number">01</span><div><h4 data-i18n="process1Title">Entender o conteúdo</h4><p data-i18n="process1Text">Conhecer o contexto, o público e a proposta. Encontrar o que faz aquele vídeo ser único.</p></div></article>
                         <article><span class="process-number">02</span><div><h4 data-i18n="process2Title">Construir a narrativa</h4><p data-i18n="process2Text">Escolher os momentos que importam e conectar ritmo, progressão, humor e clareza.</p></div></article>
@@ -166,23 +155,17 @@
                 </div>
             </div>
         </section>
-        <section class="contact-section" id="contact" aria-labelledby="contact-title">
-            <div class="container"><p class="section-index"><span>05 /</span> <span data-i18n="contactLabel">O PRÓXIMO VÍDEO COMEÇA AQUI</span></p><div class="contact-heading"><h2 id="contact-title"><span data-i18n="contactTitle1">Tem uma história</span><br><span data-i18n="contactTitle2">para contar?</span></h2><a class="contact-arrow" href="mailto:victorhugo.web11@gmail.com" aria-label="Entrar em contato por email" data-i18n-aria="emailContact">↗</a></div><div class="contact-bottom"><p data-i18n="contactText">Se você procura uma edição que valorize seu conteúdo gamer, vamos conversar sobre seu próximo vídeo.</p><a class="email-link" href="mailto:victorhugo.web11@gmail.com">victorhugo.web11@gmail.com <span aria-hidden="true">↗</span></a></div><div class="social-links"><a href="https://youtube.com/@vsilva" target="_blank" rel="noopener noreferrer">YouTube <span aria-hidden="true">↗</span></a><a href="https://instagram.com/oficialvsilva" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a><a href="https://twitter.com/vsilva_20" target="_blank" rel="noopener noreferrer">X / Twitter <span aria-hidden="true">↗</span></a><span class="discord-handle">Discord <span>vsilva</span></span></div></div>
+        <section class="contact-section wave-section" id="contact" aria-labelledby="contact-title">
+            <div class="section-waves" aria-hidden="true"><img class="wave-surface" src="assets/green-waves.webp" width="1600" height="1000" alt="" decoding="async"></div>
+            <div class="container"><div class="contact-heading"><h2 id="contact-title"><span data-i18n="contactTitle1">Tem uma história</span><br><span data-i18n="contactTitle2">para contar?</span></h2><a class="contact-arrow" href="mailto:victorhugo.web11@gmail.com" aria-label="Entrar em contato por email" data-i18n-aria="emailContact">↗</a></div><div class="contact-bottom"><p data-i18n="contactText">Se você procura uma edição que valorize seu conteúdo gamer, vamos conversar sobre seu próximo vídeo.</p><a class="email-link" href="mailto:victorhugo.web11@gmail.com">victorhugo.web11@gmail.com <span aria-hidden="true">↗</span></a></div><div class="social-links"><a href="https://youtube.com/@vsilva" target="_blank" rel="noopener noreferrer">YouTube <span aria-hidden="true">↗</span></a><a href="https://instagram.com/oficialvsilva" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a><a href="https://twitter.com/vsilva_20" target="_blank" rel="noopener noreferrer">X / Twitter <span aria-hidden="true">↗</span></a><span class="discord-handle">Discord <span>vsilva</span></span></div></div>
         </section>
     </main>
     <footer class="site-footer wave-section">
-            <div class="section-waves" aria-hidden="true">
-                <svg viewBox="0 0 1600 1000" preserveAspectRatio="none" focusable="false">
-                    <path class="wave-layer" fill="#123f32" d="M-200 790C80 590 200 900 420 730S720 780 900 460S1210 270 1430 310S1630 70 1800 140V1200H-200Z"/>
-                    <path class="wave-layer" fill="#1b5b3d" d="M-200 870C60 690 230 970 470 810S750 840 960 560S1250 350 1470 390S1670 180 1800 230V1200H-200Z"/>
-                    <path class="wave-layer" fill="#307d45" d="M-200 950C80 800 240 1030 510 890S810 910 1020 660S1310 440 1510 480S1700 300 1800 330V1200H-200Z"/>
-                    <path class="wave-layer" fill="#5baf55" d="M-200 1040C100 910 280 1100 580 980S870 990 1090 770S1360 550 1580 590S1740 420 1800 450V1200H-200Z"/>
-                    <path class="wave-layer" fill="#9ff26b" d="M-200 1130C100 1010 360 1190 640 1070S930 1080 1160 880S1410 660 1640 710S1770 540 1800 570V1200H-200Z"/>
-                </svg>
-            </div><div class="container footer-inner"><a class="wordmark" href="#hero">VSILVA<span>.</span></a><p>© <span id="copyright-year">2026</span> Vsilva. <span data-i18n="rights">Todos os direitos reservados.</span></p><a class="back-top" href="#hero"><span data-i18n="backTop">De volta ao topo</span> <span aria-hidden="true">↑</span></a></div></footer>
+            <div class="section-waves" aria-hidden="true"><img class="wave-surface" src="assets/green-waves.webp" width="1600" height="1000" alt="" decoding="async"></div><div class="container footer-inner"><a class="wordmark" href="#hero">VSILVA<span>.</span></a><p>© <span id="copyright-year">2026</span> Vsilva. <span data-i18n="rights">Todos os direitos reservados.</span></p><a class="back-top" href="#hero"><span data-i18n="backTop">De volta ao topo</span> <span aria-hidden="true">↑</span></a></div></footer>
     <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false" hidden><span class="motion-icon" aria-hidden="true"></span><span id="motion-label">Pausar animações</span></button>
     <dialog class="video-dialog" id="video-modal" aria-labelledby="player-title">
         <div class="dialog-panel"><div class="dialog-header"><h2 id="player-title"></h2><button class="close-modal" type="button" aria-label="Fechar vídeo" data-i18n-aria="closeVideo" autofocus>×</button></div><div class="player-frame" id="player-frame"></div><div class="dialog-footer"><span data-i18n="playerHint">Se o player não estiver disponível, assista no YouTube.</span><a id="player-external" target="_blank" rel="noopener noreferrer"><span data-i18n="watchYouTube">Abrir no YouTube</span> ↗</a></div></div>
     </dialog>
+    </div>
 </body>
 </html>
